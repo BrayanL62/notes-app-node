@@ -51,7 +51,7 @@ const { array } = require('yargs');
              console.log(lastNoteId);
 
              const newNote = {
-                 id: lastNoteId === 0 ? 1 : lastNoteId+1,
+                 id: lastNoteId +1,
                  title: argv.title,
                  message: argv.title
              }
@@ -99,7 +99,7 @@ const { array } = require('yargs');
 
                 fs.writeFile("data.json", newArrayJSON, (err) => {
                     if(err) console.log(err);
-                    else console.log("Chaud!");
+                    else console.log(`Note numéro ${argv.id} supprimé!`);
                 })
             }
         })
@@ -109,8 +109,30 @@ const { array } = require('yargs');
  }).command({
      command: 'read',
      describe: "Affiche le détail d'une note",
-     handler: () => {
+     builder: {
+        id: {
+            describe: "Id de la note que l'on souhaite lire",
+            demandOption: true,
+            type: BigInt
+        }
+    },
+     handler: (argv) => {
          console.log("Voici le détail d'une note");
+         console.log(`Vous avez demandé à lire la note numéro ${argv.id}`);
+         
+         fs.readFile("data.json", 'utf-8', (err,data) => {
+             if(err) console.log(err)
+             else {
+                //  console.log(data);
+                let readArrayJS = JSON.parse(data);
+                // console.log(readArrayJS);
+                let readId = readArrayJS.filter(arg => arg.id === argv.id);
+                // console.log(readId);
+                let readIdJSON = JSON.stringify(readId);
+                console.log(readIdJSON);
+             }
+         })
+
      }
  }).argv;
 
