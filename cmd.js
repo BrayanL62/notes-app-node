@@ -1,20 +1,21 @@
 const yargs = require('yargs');
+const chalk = require('chalk');
 const fs = require('fs');
 const { stringify } = require('querystring');
 const { array } = require('yargs');
- 
+
  yargs.command({
      command: 'list',
      describe: 'Liste toutes mes notes',
      handler: () => {
-        console.log("Voici la liste des notes")
+        console.log(chalk.bold.magenta("Voici la liste des notes"))
         fs.readFile("data.json", "utf-8",(err,data) => {
             if(err) console.log(err);
             else {
                 const dataJS = JSON.parse(data);
 
                 dataJS.forEach(data => {
-                    console.log(`${data.id} ${data.title} ${data.message}`)
+                    console.log(chalk.bold.red(`${data.id}`), chalk.blue(`${data.title}`), `${data.message}`)
                 })
             }
         })
@@ -39,32 +40,32 @@ const { array } = require('yargs');
          fs.readFile("data.json", "utf-8", (err, dataStr) => {
              if(err) console.log(err);
              // 1.a Grâce à l'utf-8 , le contenu du fichier est en chaîne de caractère
-             console.log(dataStr);
+            //  console.log(dataStr);
 
              // 1.b Je transforme la string JSON en valeur JS
              const notes = JSON.parse(dataStr);
-             console.log(notes);
+            //  console.log(notes);
 
              // 2 exécuter les modifications en JS
-             // 2.a Je vais récupérer le dernier élément du tableau 
+             // 2.a Je vais récupérer le dernier élément du tableau
              const lastNoteId = notes[notes.length-1].id;
-             console.log(lastNoteId);
+            //  console.log(lastNoteId);
 
              const newNote = {
                  id: lastNoteId +1,
                  title: argv.title,
-                 message: argv.title
+                 message: argv.message
              }
              notes.push(newNote);
-             console.log(notes);
+            //  console.log(notes);
 
              const notesJSON = JSON.stringify(notes);
-             console.log(notesJSON);
+            //  console.log(notesJSON);
 
              fs.writeFile("data.json", notesJSON, (err) => {
                  if(err) console.log(err)
                  else {
-                     console.log("La note a été ajoutée.")
+                     console.log(chalk.bold.green("La note a été ajoutée."))
                  }
              })
          })
@@ -81,7 +82,7 @@ const { array } = require('yargs');
          }
      },
      handler: (argv) => {
-        console.log("Chaud pour supprimer une note");
+        console.log(chalk.bold.red("Chaud pour supprimer une note"));
         console.log(argv.id);
 
         fs.readFile("data.json", "utf-8", (err, data) => {
@@ -99,12 +100,12 @@ const { array } = require('yargs');
 
                 fs.writeFile("data.json", newArrayJSON, (err) => {
                     if(err) console.log(err);
-                    else console.log(`Note numéro ${argv.id} supprimé!`);
+                    else console.log(chalk.bold.green(`Note numéro ${argv.id} supprimé!`));
                 })
             }
         })
 
-         
+
      }
  }).command({
      command: 'read',
@@ -117,9 +118,9 @@ const { array } = require('yargs');
         }
     },
      handler: (argv) => {
-         console.log("Voici le détail d'une note");
-         console.log(`Vous avez demandé à lire la note numéro ${argv.id}`);
-         
+         console.log(chalk.italic.bold("Voici le détail d'une note"));
+         console.log(chalk.magenta(`Vous avez demandé à lire la note numéro ${argv.id} :`));
+
          fs.readFile("data.json", 'utf-8', (err,data) => {
              if(err) console.log(err)
              else {
@@ -128,12 +129,12 @@ const { array } = require('yargs');
                 // console.log(readArrayJS);
                 let readId = readArrayJS.filter(arg => arg.id === argv.id);
                 // console.log(readId);
-                let readIdJSON = JSON.stringify(readId);
-                console.log(readIdJSON);
+                readId.forEach(data => {
+                    console.log(chalk.blue.bold(`title:`),`${data.title}`, chalk.blue.bold(`\nmessage:`), `${data.message}`);
+                })
              }
          })
 
      }
  }).argv;
 
- 
